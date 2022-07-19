@@ -10,9 +10,9 @@ class EixoController extends Controller
     
     public function index()
     {
-        $dados = Eixo::all();
+        $data = Eixo::orderby('nome')->get();
 
-        return view('eixos.index', compact('dados'));
+        return view('eixos.index', compact(['data']));
     }
 
     
@@ -47,13 +47,13 @@ class EixoController extends Controller
 
     public function edit($id)
     {
-        $dados = Eixo::find($id);
+        $data = Eixo::find($id);
 
-        if(!isset($dados)){
+        if(!isset($data)){
             return "<h1>ID: $id não encontrado!</h1>";
         }
 
-        return view('eixos.edit', compact('dados'));
+        return view('eixos.edit', compact(['data']));
     }
 
   
@@ -65,14 +65,14 @@ class EixoController extends Controller
             'nome' => 'required|max:100|min:10'
         ];
 
-        if (!isset($obj)) {
+       if (!isset($obj)) {
             return "<h1>ID: $id não encontrado!</h1>";
         }
 
         if (trim($request->nome) == trim($obj->nome)) {
             $regras = [
                 'nome' => 'required|max:100|min:10'
-            ];
+            ]; 
         } 
 
         $msgs = [
@@ -84,11 +84,14 @@ class EixoController extends Controller
 
         $request->validate($regras, $msgs);
 
-        $obj->fill([
-            'nome' => mb_strtoupper($request->nome, 'UTF8'),
-        ]);
+       
+        $obj = Eixo::find($id);
+        if (isset($obj)) {
+            $obj->nome = mb_strtoupper($request->nome, 'UTF-8');
+            $obj->save();
+        }
 
-        $obj->save();
+       
 
         return redirect()->route('eixos.index');
     }
@@ -98,11 +101,10 @@ class EixoController extends Controller
     {
         $obj = Eixo::find($id);
 
-        if (!isset($obj)) {
-            return "<h1>ID: $id não encontrado!</h1>";
+        
+        if (isset($obj)) {
+            $obj->delete();
         }
-
-        $obj->destroy($id);
 
         return redirect()->route('eixos.index');
     }

@@ -44,6 +44,8 @@
                             <li><a href="{{route('eixos.index')}}" class="dropdown-item">Eixos</a></li>
                             <li><a href="{{route('cursos.index')}}" class="dropdown-item">Cursos</a></li>
                             <li><a href="{{route('disciplinas.index')}}" class="dropdown-item">Disciplinas</a></li>
+                            <li><a href="{{route('docencias.index')}}" class="dropdown-item">Docencia</a></li>
+                            <li><a class="nav-link" href="{{route('professores.index')}}" class="dropdown-item">Professores</a></li>
                         </ul>
                     </li>
                     <li class="nav-item ps-2 me-3">

@@ -11,5 +11,9 @@ class Professor extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['nome', 'email', 'siape', 'eixo_id', ];
+    protected $fillable = ['nome', 'email', 'siape', 'eixo_id', 'ativo' ];
+
+    public function eixo(){
+        return $this->belongsTo('\App\Models\Eixo');
+    }
 }

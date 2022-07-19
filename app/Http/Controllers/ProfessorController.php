@@ -2,83 +2,133 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Professor;
+use App\Models\Eixo;
+use App\Models\Docencia;
+
 use Illuminate\Http\Request;
 
 class ProfessorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
-        //
+        $data = Professor::with(['eixo' => function ($q) {
+            $q->withTrashed();
+        }])->orderBy('nome')->get();
+
+        return view('professores.index', compact(['data']));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        //
+        $eixo = Eixo::orderBy('nome')->get();
+        return view('professores.create', compact(['eixo']));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'nome' => 'required|max:100|min:10',
+            'email' => 'required|max:250|min:15|unique:professors',
+            'siape' => 'required|max:10|min:8',
+            'eixo' => 'required',
+            'radio' => 'required',
+
+        ];
+
+        $msgs = [
+            "required" => "O preenchimento do campo [:attribute] é obrigatório!",
+            "max" => "O campo [:attribute] possui tamanho máximo de [:max] caracteres!",
+            "min" => "O campo [:attribute] possui tamanho mínimo de [:min] caracteres!",
+            "unique" => "O campo [:attribute] pode ter apenas um único registro!"
+        ];
+
+        $request->validate($rules, $msgs);
+
+        $eixo = Eixo::find($request->eixo);
+
+        if (isset($eixo)) {
+
+            $obj = new Professor();
+            $obj->nome = mb_strtoupper($request->nome, 'UTF-8');
+            $obj->email = mb_strtolower($request->email, 'UTF-8');
+            $obj->siape = $request->siape;
+            $obj->ativo = $request->radio;
+            $obj->eixo()->associate($eixo);
+
+            $obj->save();
+
+            return redirect()->route('professores.index');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($id)
     {
-        //
+        
+        $eixo = Eixo::orderBy('nome')->get();
+        $data = Professor::with(['eixo' => function ($q) {
+            $q->withTrashed();
+        }])->find($id);
+
+
+        if (isset($data)) {
+            return view('professores.edit', compact(['data', 'eixo']));
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
+        
+        $rules = [
+            'nome' => 'required|max:100|min:5',
+            'email' => 'required',
+            'siape' => 'required',
+            'radio' => 'required',
+            'eixo' => 'required',
+
+        ];
+        $msgs = [
+            "required" => "O preenchimento do campo [:attribute] é obrigatório!",
+            "max" => "O campo [:attribute] possui tamanho máximo de [:max] caracteres!",
+            "min" => "O campo [:attribute] possui tamanho mínimo de [:min] caracteres!",
+        ];
+
+        $request->validate($rules, $msgs);
+
+        $eixo = Eixo::find($request->eixo);
+        $obj_prof = Professor::find($id);
+
+        if (isset($eixo) && isset($obj_prof)) {
+
+            $obj_prof->nome = mb_strtoupper($request->nome, 'UTF-8');
+            $obj_prof->email = mb_strtolower($request->email, 'UTF-8');
+            $obj_prof->siape = $request->siape;
+            $obj_prof->ativo = $request->radio;
+            $obj_prof->eixo()->associate($eixo);
+            $obj_prof->save();
+
+
+            return redirect()->route('professores.index');
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+   
     public function destroy($id)
     {
-        //
+        $obj = Professor::find($id);
+
+        if (isset($obj)) {
+            $obj->delete();
+        } else {
+            $msg = "Professor";
+            $link = "professores.index";
+            return view('erros.id', compact(['msg', 'link']));
+        }
+
+        return redirect()->route('professores.index');
     }
 }

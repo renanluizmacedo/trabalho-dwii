@@ -11,5 +11,15 @@ class Eixo extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $table = "eixos";
+    
     protected $fillable = ['nome'];
+
+    public function professor(){
+        return $this->hasMany('App\Models\Professor');
+    }
+
+    public function curso(){
+        return $this->hasMany('App\Models\Curso');
+    }
 }

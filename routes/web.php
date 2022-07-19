@@ -18,6 +18,8 @@ Route::get('/', function () {
     return view('templates.main')->with('titulo', "");
 })->name('index');
 
-Route::resource('eixos', 'EixoController');
-Route::resource('cursos', 'CursoController');
-Route::resource('disciplinas', 'DisciplinaController');
+Route::resource('/eixos', 'EixoController');
+Route::resource('/cursos', 'CursoController');
+Route::resource('/disciplinas', 'DisciplinaController');
+Route::resource('/professores', 'ProfessorController');
+Route::resource('/docencias', 'DocenciaController');

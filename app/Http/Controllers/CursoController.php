@@ -13,16 +13,18 @@ class CursoController extends Controller
     
     public function index()
     {
-        $dados = Curso::all();
+        $data = Curso::with(['eixo' => function ($q){
+            $q->withTrashed();
+        }]);
 
-        return view('cursos.index', compact('dados'));
+        return view('cursos.index', compact('data'));
     }
 
     public function create()
     {
-        $ex = Eixo::all();
+        $eixo = Eixo::orderby('nome')->get();
 
-        return view('cursos.create', compact(['ex']));
+        return view('cursos.create', compact(['eixo']));
     }
 
    
@@ -49,23 +51,23 @@ class CursoController extends Controller
         Curso::create([
             
             'nome' => mb_strtoupper($request->nome, 'UTF8'),
-            'sigla' => $request->sigla,
+            'sigla' => mb_strtoupper($request->sigla, 'UTF8'),
             'tempo' => $request->tempo,
-            'eixo_id' => $request->eixo_id,
+            'eixo_id' => $request->eixo,
         ]);
 
         return redirect()->route('cursos.index');
     }
     public function edit($id)
     {
-        $dados = Curso::find($id);
-        $ex = Eixo::all();
+        $data = Curso::find($id);
+        $eixo = Eixo::orderby('nome')->get();
 
-        if (!isset($dados)) {
+        if (!isset($data)) {
             return "<h1>ID: $id não encontrado!</h1>";
         }
 
-        return view('cursos.edit', compact(['dados', 'ex']));
+        return view('cursos.edit', compact(['data', 'eixo']));
     }
 
     public function update(Request $request, $id)
@@ -102,27 +104,34 @@ class CursoController extends Controller
 
         $request->validate($regras, $msgs);
 
-        $obj->fill([
-            'nome' => mb_strtoupper($request->nome, 'UTF8'),
-            'sigla' => $request->sigla,
-            'tempo' => $request->tempo,
-            'eixo' => $request->eixo,
-        ]);
+        $eixo = Eixo::find($request->eixo);
+        $obj = Curso::find($id);
+        if (isset($eixo) && isset($obj)) {
+            $obj->nome = mb_strtoupper($request->nome, 'UTF-8');
+            $obj->sigla = mb_strtoupper($request->sigla, 'UTF-8');
+            $obj->tempo = $request->tempo;
+            $obj->eixo()->associate($eixo);
+            $obj->save();
+            return redirect()->route('cursos.index');
+        }
 
-        $obj->save();
+        $msg = "Curso ou Eixo/Área";
+        $link = "cursos.index";
 
-        return redirect()->route('cursos.index');
+        return view('erros.id', compact(['msg', 'link']));
     }
 
     public function destroy($id)
     {
         $obj = Curso::find($id);
 
-        if (!isset($obj)) {
-            return "<h1>ID: $id não encontrado!</h1>";
+        if (isset($obj)) {
+            $obj->delete();
+        } else {
+            $msg = "Curso";
+            $link = "cursos.index";
+            return view('erros.id', compact(['msg', 'link']));
         }
-
-        $obj->destroy($id);
 
         return redirect()->route('cursos.index');
     

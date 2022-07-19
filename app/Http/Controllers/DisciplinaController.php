@@ -3,25 +3,28 @@
 namespace App\Http\Controllers;
 use App\Models\Disciplina;
 use App\Models\Curso;
+use App\Models\Eixo;
 
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Log;
 
 class DisciplinaController extends Controller
 {
     
     public function index()
     {
-        $dados = Disciplina::all();
+        $data = Disciplina::with(['curso'])->orderby('nome')->get();
 
-        return view('disciplinas.index', compact('dados'));
+        return view('disciplinas.index', compact(['data']));
     }
 
     
     public function create()
     {
-        $cur = Curso::all();
+        $curso = Curso::orderby('nome')->get();
 
-        return view('disciplinas.create', compact(['cur']));
+        return view('disciplinas.create', compact(['curso']));
     }
 
    
@@ -44,26 +47,43 @@ class DisciplinaController extends Controller
         $request->validate($regras, $msgs);
 
 
-        Curso::create([
-            
-            'nome' => mb_strtoupper($request->nome, 'UTF8'),
-            'curso_id' => $request->curso_id,
-            'carga' => $request->carga,
-        ]);
+        $total = Disciplina::where('nome', mb_strtoupper($request->nome, 'UTF-8'))
+            ->where('curso_id', $request->curso)
+            ->count();
 
-        return redirect()->route('disciplinas.index');
+        if ($total > 0) {
+            $msg = "Disciplina";
+            $link = "disciplinas.index";
+            return view('erros.duplicado', compact(['msg', 'link']));
+        }
+
+        $curso = Curso::find($request->curso);
+        if (isset($curso)) {
+            $obj = new Disciplina();
+            $obj->nome = mb_strtoupper($request->nome, 'UTF-8');
+            $obj->carga = $request->carga;
+            $obj->curso()->associate($curso);
+            $obj->save();
+            return redirect()->route('disciplinas.index');
+        }
+
+        $msg = "Curso e/ou Área do Conhecimento";
+        $link = "disciplinas.index";
+        return view('erros.id', compact(['msg', 'link']));
     }
 
     public function edit($id)
     {
-        $dados = Disciplina::find($id);
-        $cur = Curso::all();
+        $data = Disciplina::find($id);
+        $curso = Curso::oderby('nome')->get();
 
-        if (!isset($dados)) {
-            return "<h1>ID: $id não encontrado!</h1>";
+        if (isset($data)) {
+            return view('disciplinas.edit', compact(['data', 'curso']));
+        } else {
+            $msg = "Disciplina";
+            $link = "disciplinas.index";
+            return view('erros.id', compact(['msg', 'link']));
         }
-
-        return view('disciplinas.edit', compact(['dados', 'cur']));
     }
 
     public function update(Request $request, $id)
@@ -97,26 +117,29 @@ class DisciplinaController extends Controller
 
         $request->validate($regras, $msgs);
 
-        $obj->fill([
-            'nome' => mb_strtoupper($request->nome, 'UTF8'),
-            'curso' => $request->curso,
-            'carga' => $request->carga,
-        ]);
+        $curso = Curso::find($request->curso);
+        $obj = Disciplina::find($id);
 
-        $obj->save();
+        if (isset($obj) && isset($curso)) {
+            $obj->nome = mb_strtoupper($request->nome, 'UTF-8');
+            $obj->carga = $request->carga;
+            $obj->curso()->associate($curso);
 
-        return redirect()->route('disciplinas.index');
+            $obj->save();
+
+            return redirect()->route('disciplinas.index');
+        }
     }
 
     public function destroy($id)
     {
         $obj = Disciplina::find($id);
 
-        if (!isset($obj)) {
-            return "<h1>ID: $id não encontrado!</h1>";
+        if (isset($obj)) {
+            $obj->delete();
         }
 
-        $obj->destroy($id);
+        
 
         return redirect()->route('disciplinas.index');
     }
