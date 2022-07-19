@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Define uma seção "titulo" -->
-    <title>SisColetivo - @yield('titulo')</title>
+    <title>SisColetivo </title>
 
     <!-- Bootstrap 5 / CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -45,7 +45,7 @@
                             <li><a href="{{route('cursos.index')}}" class="dropdown-item">Cursos</a></li>
                             <li><a href="{{route('disciplinas.index')}}" class="dropdown-item">Disciplinas</a></li>
                             <li><a href="{{route('docencias.index')}}" class="dropdown-item">Docencia</a></li>
-                            <li><a class="nav-link" href="{{route('professores.index')}}" class="dropdown-item">Professores</a></li>
+                            <li><a href="{{route('professores.index')}}" class="dropdown-item">Professores</a></li>
                         </ul>
                     </li>
                     <li class="nav-item ps-2 me-3">
@@ -64,7 +64,7 @@
     <div class="container py-4">
         <div class="row">
             <div class="col">
-                <h3 class="display-7 text-secondary d-none d-md-block"><b>{{ $titulo }}</b></h3>
+                @yield('conteudo')
             </div>
             @if(isset($rota))
             <div class="col d-flex justify-content-end">

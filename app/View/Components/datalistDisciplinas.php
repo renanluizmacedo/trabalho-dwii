@@ -25,6 +25,6 @@ class datalistDisciplinas extends Component
 
     public function render() {
 
-        return view('components.datalistDisciplinas');
+        return view('components.datalistDisciplina');
     }
 }

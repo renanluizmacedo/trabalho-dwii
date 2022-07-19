@@ -25,7 +25,7 @@
                     <div class="input-group mb-3">
                         <span class="input-group-text bg-dark text-white">Curso</span>
                         <select name="curso" class="form-select @if($errors->has('curso')) is-invalid @endif">
-                            @foreach ($cursos as $item)
+                            @foreach ($curso as $item)
                             <option value="{{$item->id}}" @if($item->id == old('curso')) selected="true" @endif>
                                 {{ $item->nome }}
                             </option>

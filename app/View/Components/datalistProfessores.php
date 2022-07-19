@@ -25,6 +25,6 @@ class datalistProfessores extends Component
 
     public function render() {
 
-        return view('components.datalistProfessores');
+        return view('components.datalistProfessor);
     }
 }

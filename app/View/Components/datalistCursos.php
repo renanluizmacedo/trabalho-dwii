@@ -9,7 +9,7 @@ class datalistCursos extends Component
     /**
      * Create a new component instance.
      *
-     * @return void
+* @return void
      */
     public $crud;
     public $header;
@@ -25,6 +25,6 @@ class datalistCursos extends Component
 
     public function render() {
 
-        return view('components.datalistCursos');
+        return view('components.datalistCurso');
     }
 }

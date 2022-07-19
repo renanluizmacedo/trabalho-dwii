@@ -12,7 +12,7 @@
 </div>
 <div class="row">
     <div class="col">
-        <table class="table align-middle caption-top  table-dark table-striped">
+        <table class="table align-middle caption-top  table-success table-striped">
             <caption>Tabela de <b>Professores</b></caption>
             <thead>
                 <tr class="header-table">

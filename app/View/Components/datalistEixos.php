@@ -25,6 +25,6 @@ class datalistEixos extends Component
 
     public function render() {
 
-        return view('components.datalistEixos');
+        return view('components.datalistEixo');
     }
 }

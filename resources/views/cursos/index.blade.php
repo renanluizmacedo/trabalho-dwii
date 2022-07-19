@@ -9,7 +9,7 @@
         <div class="col">
             
             <!-- Utiliza o componente "datalist" criado -->
-            <x-datalistCursos
+            <x-datalistCurso
                 :header="[ 'NOME', 'SIGLA', 'AÇÕES']" 
                 :data="$data"
                 :hide="[ false, true, false]" 
