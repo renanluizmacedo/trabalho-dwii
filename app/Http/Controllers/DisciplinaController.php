@@ -44,7 +44,7 @@ class DisciplinaController extends Controller
             "unique" => "Já existe um Veterinário cadastrado com esse [:attribute]!"
         ];
 
-        $request->validate($regras, $msgs);
+        //$request->validate($regras, $msgs);
 
         $curso = Curso::find($request->curso);
         if (isset($curso)) {

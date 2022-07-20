@@ -44,7 +44,7 @@ class CursoController extends Controller
         ];
 
 
-        $request->validate($regras, $msgs);
+        //$request->validate($regras, $msgs);
 
 
         Curso::create([

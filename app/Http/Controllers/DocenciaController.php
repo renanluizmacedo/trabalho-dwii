@@ -17,11 +17,9 @@ class DocenciaController extends Controller
     {
         $curso  = Curso::with(['eixo']);
 
-        $disciplina = Disciplina::with(['curso'])
-            ->orderBy('curso_id')->orderBy('id')->get();
-
+        $disciplina = Disciplina::all();
         $prof = Professor::orderBy('id')->get();
-
+        
         return view('docencias.index', compact(['prof', 'disciplina', 'curso']));
     }
 
@@ -35,6 +33,8 @@ class DocenciaController extends Controller
     {
         $rules = [
             'PROFESSOR_ID_SELECTED' => 'required',
+            'DISCIPLINA' => 'required',
+
         ];
         $msgs = [
             "required" => "O preenchimento do campo [:attribute] é obrigatório!",
@@ -44,16 +44,11 @@ class DocenciaController extends Controller
 
         $request->validate($rules, $msgs);
 
-        $ids_prof = $request->PROFESSOR_ID_SELECTED;
-        $disciplina = $request->DISCIPLINA;
-
-
-        for ($i = 0; $i < count($request->DISCIPLINA); $i++) {
             $doc = new Docencia();
-            $doc->professor_id = $ids_prof[$i];
-            $doc->disciplina_id = $disciplina[$i];
+            $doc->professor_id = $request->PROFESSOR_ID_SELECTED['0'];
+            $doc->disciplina_id = $request->DISCIPLINA;
             $doc->save();
-        }
+        
 
         return redirect()->route('disciplinas.index');
     }
