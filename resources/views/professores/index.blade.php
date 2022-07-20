@@ -8,7 +8,7 @@
     <div class="col">
 
         <!-- Utiliza o componente "datalist" criado -->
-        <x-datalistProfessore :header="['NOME', 'EIXO','STATUS', 'AÇÕES']" 
+        <x-datalistProfessor :header="['NOME', 'EIXO','STATUS', 'AÇÕES']" 
         :data="$data" 
         :hide="[ false, true, true,false]" />
 

@@ -13,9 +13,7 @@ class CursoController extends Controller
     
     public function index()
     {
-        $data = Curso::with(['eixo' => function ($q){
-            $q->withTrashed();
-        }]);
+        $data = Curso::all();
 
         return view('cursos.index', compact('data'));
     }
@@ -30,6 +28,7 @@ class CursoController extends Controller
    
     public function store(Request $request)
     {
+
         $regras = [
             'nome' => 'required|max:50|min:10|unique:cursos',
             'sigla' => 'required|max:8|min:2',
@@ -41,7 +40,7 @@ class CursoController extends Controller
             "required" => "O preenchimento do campo [:attribute] é obrigatório!",
             "max" => "O campo [:attribute] possui tamanho máximo de [:max] caracteres!",
             "min" => "O campo [:attribute] possui tamanho mínimo de [:min] caracteres!",
-            "unique" => "Já existe um Veterinário cadastrado com esse [:attribute]!"
+            "unique" => "Já existe um Curso cadastrado com esse [:attribute]!"
         ];
 
 

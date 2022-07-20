@@ -13,9 +13,7 @@ class ProfessorController extends Controller
     
     public function index()
     {
-        $data = Professor::with(['eixo' => function ($q) {
-            $q->withTrashed();
-        }])->orderBy('nome')->get();
+        $data = Professor::with(['eixo'])->get();
 
         return view('professores.index', compact(['data']));
     }

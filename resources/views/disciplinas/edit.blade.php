@@ -35,7 +35,7 @@
                             name="curso"
                             class="form-select @if($errors->has('curso')) is-invalid @endif"
                         >
-                            @foreach ($cursos as $item)
+                            @foreach ($curso as $item)
                                 <option value="{{$item->id}}" @if($item->id == $data->curso_id) selected="true" @endif>
                                     {{ $item->nome }}
                                 </option>
